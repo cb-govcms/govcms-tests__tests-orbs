@@ -34,4 +34,5 @@ steps:
   - run:
       name: Run PHPUnit tests for the GovCMS distribution
       command: |
+        export SYMFONY_DEPRECATIONS_HELPER=disabled
         sudo -u root -E sudo -u www-data -E ./bin/phpunit -c web/core tests/phpunit/tests/GovCMS --testdox
