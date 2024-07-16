@@ -26,4 +26,4 @@ steps:
       command: git clone --depth 1 -b 3.x-develop https://github.com/govcms-tests/tests.git /app/tests
   - run:
       name: Run PHPUnit tests
-      command: phpunit --bootstrap /app/tests/phpunit/bootstrap.php --configuration /app/tests/phpunit/phpunit.xml --testdox --testsuite govcms-integration  || true
+      command: phpunit --bootstrap /app/tests/phpunit/bootstrap.php --configuration /app/tests/phpunit/phpunit.xml --testdox --testsuite govcms-integration

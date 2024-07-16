@@ -42,7 +42,7 @@ steps:
   - run:
       name: Run Cypress tests
       command: |
-        cd tests/cy && npx cypress run --config baseUrl=http://localhost || true
+        cd tests/cy && npx cypress run --config baseUrl=http://localhost
   - store_artifacts:
       path: tests/cy/cypress/videos
   - store_artifacts:
