@@ -4,7 +4,7 @@ description: >
 parameters:
   php_version:
     type: string
-    default: "8.3-apache"
+    default: "latest-php8.3-apache"
     description: "The version of PHP to use."
 
 executor:
@@ -14,6 +14,9 @@ executor:
 working_directory: /app
 
 steps:
+  - run:
+      name: Clean Working Directory
+      command: find /app -mindepth 1 -delete
   - checkout
   - run:
       name: Install GovCMS dependencies
@@ -24,24 +27,16 @@ steps:
       command: |
         php -v
         composer --version
-        bin/drush version
-  - run:
-      name: Setup webserver
-      command: |
-        echo "127.0.0.1 local.govcms.gov.au" | tee --append /etc/hosts
-        service apache2 restart
+        drush version
   - run:
       name: Install GovCMS site
       command: >
-        cd web
-
-        ../bin/drush si -y govcms
+        drush si -y govcms
         --db-url=sqlite://localhost/sites/default/files/.ht.sqlite --site-name='GovCMS'
         install_configure_form.enable_update_status_emails=NULL
         install_configure_form.enable_update_status_module=NULL || true
   - run:
       name: Get site and module version status
       command: |
-        cd web
-        ../bin/drush status
-        ../bin/drush pm:list --no-core
+        drush status
+        drush pm:list --no-core
