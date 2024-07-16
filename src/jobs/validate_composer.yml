@@ -19,6 +19,9 @@ steps:
       command: find /app -mindepth 1 -delete
   - checkout
   - run:
+      name: Install GovCMS Dependencies
+      command: composer update --profile --prefer-dist --optimize-autoloader
+  - run:
       name: Validate distribution composer.json
       command: |
         composer validate --no-check-all
