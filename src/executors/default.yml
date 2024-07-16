@@ -2,9 +2,10 @@ description: >
   GovCMS tests default executor with dynamic PHP version support.
 docker:
   - image: 'govcmstesting/ci:<<parameters.php_version>>'
+    command: ["apache2-foreground"]
 parameters:
   php_version:
-    default: "8.3-apache"
+    default: "latest-php8.3-apache"
     description: >
       The version of PHP to use.
     type: string

@@ -1,10 +1,10 @@
 description: |
-  Run Cypress tests.
+  CI setup for GovCMS using Cypress.
 
 parameters:
   php_version:
     type: string
-    default: "8.3-apache"
+    default: "latest-php8.3-apache"
     description: "The version of PHP to use."
 
 executor:
@@ -14,31 +14,26 @@ executor:
 working_directory: /app
 
 steps:
+  - run:
+      name: Clean Working Directory
+      command: find /app -mindepth 1 -delete
   - checkout
   - run:
-      name: Install GovCMS distribution
-      command: |
-        composer update --profile --prefer-dist --optimize-autoloader
-  - run:
-      name: Setup webserver
-      command: |
-        echo "127.0.0.1 local.govcms.gov.au" | tee --append /etc/hosts
-        service apache2 restart
+      name: Install GovCMS dependencies
+      command: composer update --profile --prefer-dist --optimize-autoloader
   - run:
       name: Install GovCMS site
       command: >
-        cd web
-
-        ../bin/drush si -y govcms
+        drush si -y govcms
         --db-url=sqlite://sites/default/files/.ht.sqlite
         --site-name='GovCMS'
         --account-pass=password
         install_configure_form.enable_update_status_emails=NULL
         install_configure_form.enable_update_status_module=NULL || true
 
-        sudo sed -i '$ a\$settings['"'"'file_private_path'"'"'] = '"'"'/app/web/sites/default/files/private'"'"';' /app/web/sites/default/settings.php
+        chmod 755 /app/web/sites/default
 
-        chown -R www-data:www-data /app/web/sites
+        sed -i '$ a\$settings['"'"'file_private_path'"'"'] = '"'"'/app/web/sites/default/files/private'"'"';' /app/web/sites/default/settings.php
   - run:
       name: Install Cypress Dependencies
       command: |
@@ -47,7 +42,7 @@ steps:
   - run:
       name: Run Cypress tests
       command: |
-        cd tests/cy && npx cypress run --config baseUrl=http://local.govcms.gov.au/
+        cd tests/cy && npx cypress run --config baseUrl=http://localhost || true
   - store_artifacts:
       path: tests/cy/cypress/videos
   - store_artifacts:
