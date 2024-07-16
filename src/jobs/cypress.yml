@@ -32,7 +32,7 @@ steps:
         install_configure_form.enable_update_status_module=NULL || true
 
         chmod 755 /app/web/sites/default
-        
+
         sed -i '$ a\$settings['"'"'file_private_path'"'"'] = '"'"'/app/web/sites/default/files/private'"'"';' /app/web/sites/default/settings.php
   - run:
       name: Install Cypress Dependencies
